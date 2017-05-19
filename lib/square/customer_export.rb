@@ -10,14 +10,18 @@ class Square::CustomerExport
     results = square_client.list_customers(pagination_cursor: pagination_cursor)
 
     Array(results&.customers).each do |customer|
-      salesforce_client.synchronize_contact(
-        Salesforce::Contact.new(
-          first_name: customer.given_name,
-          last_name:  customer.family_name,
-          email:      customer.email_address,
-        ),
-        dry_run: true
-      )
+      begin
+        salesforce_client.synchronize_contact(
+          Salesforce::Contact.new(
+            first_name: customer.given_name,
+            last_name:  customer.family_name,
+            email:      customer.email_address,
+          ),
+          dry_run: true
+        )
+      rescue => e
+        Rails.logger.error(e)
+      end
     end
 
     Rails.logger.info "Finished: Exporting list of customers from Square."
