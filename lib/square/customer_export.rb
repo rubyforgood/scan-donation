@@ -31,10 +31,4 @@ class Square::CustomerExport
     end
   end
 
-  private
-
-  def auth_token
-    Square.api_key
-  end
-
 end
