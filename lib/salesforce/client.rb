@@ -15,7 +15,9 @@ module Salesforce
     API_VERSION = "39.0".freeze
     CONTACT = "Contact".freeze
 
-    def initialize(client_id:, client_secret:, username:, password:, security_token:)
+    def initialize(client_id:, client_secret:, username:, password:, security_token:, logger: Rails.logger)
+      @logger = logger
+
       @client = Restforce.new(
         client_id:      client_id,
         client_secret:  client_secret,
@@ -23,10 +25,11 @@ module Salesforce
         password:       password,
         security_token: security_token,
         api_version:    API_VERSION,
+        logger:         logger
       )
     end
 
-    def synchronize_contact(contact)
+    def synchronize_contact(contact, dry_run: false)
       results = @client.query(
         format(
           "SELECT Id, Email FROM %s " + \
@@ -51,7 +54,13 @@ module Salesforce
         end
 
         if fields.any?
-          @client.update!(CONTACT, fields.merge(Id: result["Id"]))
+          if dry_run
+            @logger.info("Would update #{CONTACT} with Id: #{result["Id"]}: #{fields.inspect}")
+          else
+            @client.update!(CONTACT, fields.merge(Id: result["Id"]))
+          end
+        elsif dry_run
+          @logger.info("No fields to update for #{CONTACT} with Id #{result["Id"]}")
         end
       else
         fields = {
@@ -60,7 +69,11 @@ module Salesforce
           Email:     contact.email
         }
 
-        @client.create!(CONTACT, fields)
+        if dry_run
+          @logger.info("Would create #{CONTACT}: #{fields.inspect}")
+        else
+          @client.create!(CONTACT, fields)
+        end
       end
     end
   end

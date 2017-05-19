@@ -9,15 +9,14 @@ class Square::CustomerExport
     results = list(pagination_cursor: pagination_cursor)
 
     Array(results&.customers).each do |customer|
-      obj = salesforce_client.synchronize_contact(
+      salesforce_client.synchronize_contact(
         Salesforce::Contact.new(
           first_name: customer.given_name,
           last_name:  customer.family_name,
           email:      customer.email_address,
-        )
+        ),
+        dry_run: true
       )
-
-      Rails.logger.info "Created in Salesforce: #{obj.inspect}" if obj.present?
     end
 
     Rails.logger.info "Finished: Exporting list of customers from Square."
