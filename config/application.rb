@@ -16,6 +16,7 @@ module ScanDonation
     # -- all .rb files in that directory are automatically loaded.
 
     config.autoload_paths << Rails.root.join("lib")
+    config.eager_load_paths << Rails.root.join("lib")
   end
 
   def self.config
@@ -24,7 +25,7 @@ module ScanDonation
 
   class Configuration
     def salesforce_client
-      Salesforce::Client.new(
+      ::Salesforce::Client.new(
         client_id:      ENV.fetch("SALESFORCE_CLIENT_ID"),
         client_secret:  ENV.fetch("SALESFORCE_CLIENT_SECRET"),
         username:       ENV.fetch("SALESFORCE_USERNAME"),
