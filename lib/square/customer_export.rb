@@ -29,9 +29,6 @@ class Square::CustomerExport
     }
 
     api_instance.list_customers(auth_token, opts)
-  rescue SquareConnect::ApiError => e
-    Rails.logger.error "Exception when calling SquareConnect::CustomerApi->list_customers: #{e}"
-    OpenStruct.new
   end
 
   private
