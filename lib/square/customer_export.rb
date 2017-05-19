@@ -3,17 +3,21 @@ require 'square_connect'
 class Square::CustomerExport
 
   def export_to_salesforce(pagination_cursor: nil)
+    salesforce_client = ScanDonation.config.salesforce_client
+
     Rails.logger.info "Starting: Exporting list of customers from Square."
     results = list(pagination_cursor: pagination_cursor)
 
     Array(results&.customers).each do |customer|
-      Salesforce::Client.syncronize_contact(
+      obj = salesforce_client.synchronize_contact(
         Salesforce::Contact.new(
           first_name: customer.given_name,
           last_name:  customer.family_name,
           email:      customer.email_address,
         )
       )
+
+      Rails.logger.info "Created in Salesforce: #{obj.inspect}" if obj.present?
     end
 
     Rails.logger.info "Finished: Exporting list of customers from Square."

@@ -40,25 +40,27 @@ module Salesforce
         )
       )
 
-      result = results[0]
+      result = results.first
       if result
         # An existing contact exists
-        fields = {
-          Id: result["Id"]
-        }
+        fields = {}
 
         # TODO: Should we overwrite email if it already exists?
         if !result["Email"].present?
           fields["Email"] = contact.email
         end
 
-        @client.update(CONTACT, fields)
+        if fields.any?
+          @client.update!(CONTACT, fields.merge(Id: result["Id"]))
+        end
       else
         fields = {
-          Email: contact.email
+          FirstName: contact.first_name,
+          LastName:  contact.last_name,
+          Email:     contact.email
         }
 
-        @client.create(CONTACT, fields)
+        @client.create!(CONTACT, fields)
       end
     end
   end
