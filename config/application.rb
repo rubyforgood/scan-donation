@@ -24,12 +24,18 @@ module ScanDonation
 
   class Configuration
     def salesforce_client
-      Salesforce::Client.new(
+      @salesforce_client ||= Salesforce::Client.new(
         client_id:      ENV.fetch("SALESFORCE_CLIENT_ID"),
         client_secret:  ENV.fetch("SALESFORCE_CLIENT_SECRET"),
         username:       ENV.fetch("SALESFORCE_USERNAME"),
         password:       ENV.fetch("SALESFORCE_PASSWORD"),
         security_token: ENV.fetch("SALESFORCE_SECURITY_TOKEN")
+      )
+    end
+
+    def square_client
+      @square_client ||= Square::Client.new(
+        api_key: ENV.fetch("SQUARE_API_KEY")
       )
     end
   end
