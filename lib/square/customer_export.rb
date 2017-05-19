@@ -1,12 +1,6 @@
 require 'square_connect'
 
-class SquareCustomerExport
-
-  attr_reader :auth_token
-
-  def initialize(auth_token)
-    @auth_token = auth_token
-  end
+class Square::CustomerExport
 
   def list(pagination_cursor: nil)
     opts = {
@@ -17,9 +11,14 @@ class SquareCustomerExport
   rescue SquareConnect::ApiError => e
     #TODO: Add Logger?
     puts "Exception when calling CustomerApi->list_customers: #{e}"
+    OpenStruct.new
   end
 
   private
+
+  def auth_token
+    Square.api_key
+  end
 
   def api_instance
     @api_instance ||= SquareConnect::CustomerApi.new
