@@ -4,7 +4,7 @@ class Square::CustomerExport
 
   def export_to_salesforce(pagination_cursor: nil)
     Rails.logger.info "Starting: Exporting list of customers from Square."
-    results = list
+    results = list(pagination_cursor: pagination_cursor)
 
     Array(results&.customers).each do |customer|
       Salesforce::Client.syncronize_contact(
@@ -16,9 +16,11 @@ class Square::CustomerExport
       )
     end
 
-    Rail.logger.info "Finished: Exporting list of customers from Square."
+    Rails.logger.info "Finished: Exporting list of customers from Square."
 
-    export_to_salesforce(pagination_cursor: results.cursor) unless resuls.cursor.nil?
+    if results&.cursor&.present?
+      export_to_salesforce(pagination_cursor: results.cursor)
+    end
   end
 
   def list(pagination_cursor: nil)
