@@ -9,10 +9,9 @@ class SquareCustomerExport
   end
 
   def list(pagination_cursor: nil)
-    #opts = {
-    # cursor: pagination_cursor.to_s
-    #}
-    opts = {}
+    opts = {
+      cursor: pagination_cursor
+    }
 
     api_instance.list_customers(auth_token, opts)
   rescue SquareConnect::ApiError => e
