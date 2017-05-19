@@ -1,6 +1,6 @@
 require 'square/customer_export'
 
-class ExportSquareToForce < ApplicationJob
+class ExportSquareToForceJob < ApplicationJob
 
   def perform
     Square::CustomerExport.new.export_to_sales_force
