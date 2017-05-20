@@ -36,6 +36,8 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'square_connect'
 gem 'restforce', '~> 2.5'
+gem 'rollbar', '~> 2.14'
+gem 'oj', '~> 3.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

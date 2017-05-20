@@ -100,6 +100,7 @@ GEM
     nio4r (2.0.0)
     nokogiri (1.7.2)
       mini_portile2 (~> 2.1.0)
+    oj (3.0.9)
     pg (0.20.0)
     public_suffix (2.0.5)
     puma (3.8.2)
@@ -138,6 +139,8 @@ GEM
       faraday_middleware (>= 0.8.8, <= 1.0)
       hashie (>= 1.2.0, < 4.0)
       json (>= 1.7.5)
+    rollbar (2.14.1)
+      multi_json
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
     safe_yaml (1.0.4)
@@ -204,10 +207,12 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
+  oj (~> 3.0)
   pg (~> 0.18)
   puma (~> 3.7)
   rails (~> 5.1.1)
   restforce (~> 2.5)
+  rollbar (~> 2.14)
   sass-rails (~> 5.0)
   selenium-webdriver
   spring
@@ -223,4 +228,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.14.6
+   1.15.0
