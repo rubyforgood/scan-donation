@@ -17,7 +17,7 @@ class SquareTransactionTest < ActiveSupport::TestCase
     create_transaction(created_at: newest_record_time - 1.day)
     create_transaction(created_at: newest_record_time - 1.minute)
 
-    assert_equal(newest_record_time, SquareTransaction.last_written_time)
+    assert_equal(newest_record_time.to_i, SquareTransaction.last_written_time.to_i)
   end
 
   def create_transaction(overrides={})
