@@ -34,15 +34,15 @@ class CustomerExport
   def create_square_customer(customer)
     square_customer = SquareCustomer.find_or_initialize_by(square_id: customer.id)
     if square_customer.new_record?
-      id = find_square_customer_in_salesforce(customer)
-      if id.nil? && @wet_run
-        id = create_square_customer_in_salesforce(customer)
-      elsif id.nil?
+      salesforce_id = find_square_customer_in_salesforce(customer)
+      if salesforce_id.nil? && @wet_run
+        salesforce_id = create_square_customer_in_salesforce(customer)
+      elsif salesforce_id.nil?
         Rails.logger.info "Dry run: would create #{customer} in Salesforce"
       end
 
-      if !id.nil?
-        square_customer.salesforce_id = id
+      if !salesforce_id.nil?
+        square_customer.salesforce_id = salesforce_id
         square_customer.save!
       end
     end
