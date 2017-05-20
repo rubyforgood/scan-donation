@@ -63,7 +63,13 @@ class CustomerExport
     if customer.given_name.present? && customer.family_name.present?
       id = @salesforce_client.find_contact(
         first_name: customer.given_name,
-        last_name:  customer.family_name,
+        last_name:  customer.family_name
+      )
+      return id if id.present?
+
+      # Also look at nickname
+      id = @salesforce_client.find_contact(
+        nickname: [customer.given_name, customer.family_name].join(' ')
       )
       return id if id.present?
     end
