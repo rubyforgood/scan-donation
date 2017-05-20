@@ -17,24 +17,27 @@ class TransactionExportTest < ActiveSupport::TestCase
   end
 
   test 'requests transactions from square with no existing synced transactions' do
-    stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?sort_order=ASC").
-      with(headers: {'Accept'=>'application/json', 'Authorization'=>'Bearer api_key', 'Content-Type'=>'application/json', 'Expect'=>'', 'User-Agent'=>'Square-Connect-Ruby/2.0.2'}).
-      to_return(status: 200, body: @response_body, headers: {})
-
-    assert_difference('SquareTransaction.count', 1) do
-      TransactionExport.new.export_to_salesforce
-    end
-  end
-
-  test 'requests transactios for date from square when synced transactions exist' do
-    begin_time = 5.minutes.ago
-    SquareTransaction.create!(square_id: '321cba', salesforce_id: '42', created_at: begin_time)
+    now = Time.now
+    begin_time = 7.days.ago(now)
     stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{begin_time.rfc3339}&sort_order=ASC").
       with(headers: {'Accept'=>'application/json', 'Authorization'=>'Bearer api_key', 'Content-Type'=>'application/json', 'Expect'=>'', 'User-Agent'=>'Square-Connect-Ruby/2.0.2'}).
       to_return(status: 200, body: @response_body, headers: {})
 
     assert_difference('SquareTransaction.count', 1) do
-      TransactionExport.new.export_to_salesforce
+      TransactionExport.new(now: now).export_to_salesforce
+    end
+  end
+
+  test 'requests transactios for date from square when synced transactions exist' do
+    now = Time.now
+    begin_time = 7.days.ago(5.minutes.ago(now))
+    SquareTransaction.create!(square_id: '321cba', salesforce_id: '42', created_at: 5.minutes.ago(now))
+    stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{begin_time.utc.rfc3339}&sort_order=ASC").
+      with(headers: {'Accept'=>'application/json', 'Authorization'=>'Bearer api_key', 'Content-Type'=>'application/json', 'Expect'=>'', 'User-Agent'=>'Square-Connect-Ruby/2.0.2'}).
+      to_return(status: 200, body: @response_body, headers: {})
+
+    assert_difference('SquareTransaction.count', 1) do
+      TransactionExport.new(now: now).export_to_salesforce
     end
   end
 end

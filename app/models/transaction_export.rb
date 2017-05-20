@@ -1,11 +1,20 @@
 class TransactionExport
   ANONYMOUS_SALESFORCE_CUSTOMER_ID = '00331000031Tt8i'.freeze
+  BEGIN_TIME_BUFFER_DAYS = 7.freeze
+
+  def initialize(now: Time.now)
+    @now = now
+  end
 
   def export_to_salesforce(pagination_cursor: nil)
     square_client = ScanDonation.config.square_client
 
     Rails.logger.info "Starting: Exporting list of transactions from Square."
-    results = square_client.list_transactions(pagination_cursor: pagination_cursor, begin_time: SquareTransaction.last_written_time)
+    begin_time = SquareTransaction.last_written_time || @now
+    results = square_client.list_transactions(
+      pagination_cursor: pagination_cursor,
+      begin_time: BEGIN_TIME_BUFFER_DAYS.days.ago(begin_time)
+    )
 
     Array(results&.transactions).each do |transaction|
       begin
