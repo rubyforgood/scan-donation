@@ -1,6 +1,15 @@
 require "restforce"
 
 module Salesforce
+  class Account
+    attr_reader :id, :name
+
+    def initialize(id:, name:)
+      @id = id
+      @name = name
+    end
+  end
+
   class Contact
     attr_reader :first_name, :last_name, :email
 
@@ -50,6 +59,20 @@ module Salesforce
           "LIMIT 1"
       )
       results.first&.fetch("Id")
+    end
+
+    def account_for_contact(contact_id)
+      results = @client.query(
+        "SELECT Account.Id, Account.Name FROM #{CONTACT} WHERE Id='%s'" % [contact_id]
+      )
+
+      result = results.first
+      if result.present?
+        Account.new(
+          id:   result["Account"]["Id"],
+          name: result["Account"]["Name"]
+        )
+      end
     end
 
     def create_contact(contact)

@@ -62,5 +62,14 @@ module Salesforce
       res = client.create_contact(contact)
       res.must_equal "abc123"
     end
+
+    it "fetches the account associated with a contact by id" do
+      stub_salesforce_login
+      stub_salesforce_search(/SELECT.+Account\.Id.+FROM.+Contact.+WHERE.+Id='abc123'/, [{ Account: { Id: "zzz999", Name: "account name" } }])
+
+      res = client.account_for_contact("abc123")
+      res.id.must_equal "zzz999"
+      res.name.must_equal "account name"
+    end
   end
 end
