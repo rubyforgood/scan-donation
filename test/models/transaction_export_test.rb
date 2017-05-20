@@ -19,7 +19,7 @@ class TransactionExportTest < ActiveSupport::TestCase
   test 'requests transactions from square with no existing synced transactions' do
     now = Time.now
     begin_time = 7.days.ago(now)
-    stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{begin_time.rfc3339}&sort_order=ASC").
+    stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{URI.encode(begin_time.rfc3339)}&sort_order=ASC").
       with(headers: {'Accept'=>'application/json', 'Authorization'=>'Bearer api_key', 'Content-Type'=>'application/json', 'Expect'=>'', 'User-Agent'=>'Square-Connect-Ruby/2.0.2'}).
       to_return(status: 200, body: @response_body, headers: {})
 
@@ -32,7 +32,7 @@ class TransactionExportTest < ActiveSupport::TestCase
     now = Time.now
     begin_time = 7.days.ago(5.minutes.ago(now))
     SquareTransaction.create!(square_id: '321cba', salesforce_id: '42', created_at: 5.minutes.ago(now))
-    stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{begin_time.utc.rfc3339}&sort_order=ASC").
+    stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{URI.encode(begin_time.utc.rfc3339)}&sort_order=ASC").
       with(headers: {'Accept'=>'application/json', 'Authorization'=>'Bearer api_key', 'Content-Type'=>'application/json', 'Expect'=>'', 'User-Agent'=>'Square-Connect-Ruby/2.0.2'}).
       to_return(status: 200, body: @response_body, headers: {})
 
