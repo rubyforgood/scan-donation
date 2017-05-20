@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170520180311) do
+ActiveRecord::Schema.define(version: 20170520191749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20170520180311) do
     t.string "salesforce_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_square_transactions_on_created_at"
     t.index ["square_id"], name: "index_square_transactions_on_square_id", unique: true
   end
 
