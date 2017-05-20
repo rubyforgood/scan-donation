@@ -16,7 +16,8 @@ class Square::CustomerExportTest < Minitest::Spec
         ENV["SALESFORCE_CLIENT_SECRET"] = 'client_secret'
         ENV["SALESFORCE_USERNAME"] = 'username'
         ENV["SALESFORCE_PASSWORD"] = 'password'
-        ENV["SALESFORCE_SECURITY_TOKEN"] = 'api_token'
+        ENV["SALESFORCE_SECURITY_TOKEN"] = 'security_token'
+        ENV["SQUARE_API_KEY"] = 'api_key'
 
         stub_request(:get, "https://connect.squareup.com/v2/customers").
           to_return(status: 200, body: response_body, headers: {})
