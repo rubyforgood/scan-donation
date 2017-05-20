@@ -3,6 +3,7 @@ require 'square/client'
 
 module Square
   class ClientTest < Minitest::Spec
+
     describe Square::Client do
       let(:api_key) { SecureRandom.base64 }
       let(:client)  { Square::Client.new(api_key: api_key) }
@@ -23,7 +24,7 @@ module Square
           assert_equal('Force', customer.family_name)
         end
       end
-
     end
+
   end
 end
