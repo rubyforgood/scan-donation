@@ -38,54 +38,29 @@ module Salesforce
       )
     end
 
-    it "creates a contact if one doesn't currently exist" do
+    it "detects whether a contacts exists by querying salesforce" do
       stub_salesforce_login
-      stub_salesforce_search(/SELECT.*FROM.*Contact/, [])
+      stub_salesforce_search(/SELECT.+FROM.+Contact.+WHERE.+FirstName='John'.+AND.+LastName='Smith'/, [{ Id: "abc123" }])
+
+      res = client.find_contact(first_name: "John", last_name: "Smith")
+      res.must_equal "abc123"
+    end
+
+    it "creates a contact" do
+      stub_salesforce_login
 
       contact = Salesforce::Contact.new(
         first_name: "John",
         last_name:  "Smith",
-        email:      "johnsmith@example.com"
+        email:      "jsmith@example.com"
       )
 
-      req = stub_request(:post, "#{INSTANCE_URL}/services/data/v#{API_VERSION}/sobjects/Contact")
-        .with(body: {
-          "FirstName" => contact.first_name,
-          "LastName" => contact.last_name,
-          "Email" => contact.email
-        })
-        .to_return(
-          status: 200,
-          headers: { "Content-Type" => "application/json" },
-          body: JSON.dump(Id: "003abc123")
-        )
+      stub_request(:post, "#{INSTANCE_URL}/services/data/v#{API_VERSION}/sobjects/Contact")
+        .with(body: {FirstName: contact.first_name, LastName: contact.last_name, Email: contact.email})
+        .to_return(status: 200, headers: { "content-type" => "application/json" }, body: JSON.dump({ "id" => "abc123"}))
 
-      client.synchronize_contact(contact)
-      assert_requested req
-    end
-
-    it "adds an email address to an existing contact if one doesn't exist" do
-      stub_salesforce_login
-      stub_salesforce_search(/SELECT.*FROM.*Contact/, [
-        { "Id" => "abc123", "Email" => nil }
-      ])
-
-      contact = Salesforce::Contact.new(
-        first_name: "John",
-        last_name: "Smith",
-        email: "johnsmith@example.com"
-      )
-
-      req = stub_request(:patch, "#{INSTANCE_URL}/services/data/v#{API_VERSION}/sobjects/Contact/abc123")
-        .with(body: { "Email" => contact.email })
-        .to_return(
-          status: 200,
-          headers: { "Content-Type" => "application/json" },
-          body: JSON.dump(Id: "abc123")
-        )
-
-      client.synchronize_contact(contact)
-      assert_requested req
+      res = client.create_contact(contact)
+      res.must_equal "abc123"
     end
   end
 end

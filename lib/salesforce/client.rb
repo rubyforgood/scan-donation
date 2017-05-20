@@ -9,6 +9,14 @@ module Salesforce
       @last_name = last_name
       @email = email
     end
+
+    def to_salesforce
+      {
+        FirstName: first_name,
+        LastName:  last_name,
+        Email:     email
+      }
+    end
   end
 
   class Client
@@ -29,52 +37,22 @@ module Salesforce
       )
     end
 
-    def synchronize_contact(contact, dry_run: false)
+    def find_contact(first_name: :ignore, last_name: :ignore, email: :ignore)
+      clauses = {}
+      clauses[:FirstName] = first_name unless first_name == :ignore
+      clauses[:LastName] = last_name unless last_name == :ignore
+      clauses[:Email] = email unless email == :ignore
+
       results = @client.query(
-        format(
-          "SELECT Id, Email FROM %s " + \
-            "WHERE FirstName = '%s' AND " + \
-            "LastName = '%s' AND " + \
-            "IsDeleted = false " + \
-            "LIMIT 1",
-          CONTACT,
-          contact.first_name,
-          contact.last_name
-        )
+        "SELECT Id FROM #{CONTACT} " +
+          "WHERE " + clauses.map { |k, v| "#{k}='#{v}'" }.join(" AND ") + " " + \
+          "LIMIT 1"
       )
+      results.first&.fetch("Id")
+    end
 
-      result = results.first
-      if result
-        # An existing contact exists
-        fields = {}
-
-        # TODO: Should we overwrite email if it already exists?
-        if !result["Email"].present?
-          fields["Email"] = contact.email
-        end
-
-        if fields.any?
-          if dry_run
-            @logger.info("Would update #{CONTACT} with Id: #{result["Id"]}: #{fields.inspect}")
-          else
-            @client.update!(CONTACT, fields.merge(Id: result["Id"]))
-          end
-        elsif dry_run
-          @logger.info("No fields to update for #{CONTACT} with Id #{result["Id"]}")
-        end
-      else
-        fields = {
-          FirstName: contact.first_name,
-          LastName:  contact.last_name,
-          Email:     contact.email
-        }
-
-        if dry_run
-          @logger.info("Would create #{CONTACT}: #{fields.inspect}")
-        else
-          @client.create!(CONTACT, fields)
-        end
-      end
+    def create_contact(contact)
+      @client.create!(CONTACT, contact.to_salesforce)
     end
   end
 end

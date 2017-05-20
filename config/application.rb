@@ -24,6 +24,12 @@ module ScanDonation
   end
 
   class Configuration
+    # We default to not writing any data to Salesforce. If we are ready to
+    # actually sync, WET_RUN should be set to a non-empty value.
+    def wet_run?
+      ENV["WET_RUN"].present?
+    end
+
     def salesforce_client
       @salesforce_client ||= ::Salesforce::Client.new(
         client_id:      ENV.fetch("SALESFORCE_CLIENT_ID"),
