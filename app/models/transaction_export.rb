@@ -7,8 +7,7 @@ class TransactionExport
 
     Array(results&.transactions).each do |transaction|
       begin
-        #TODO: Do the work here.
-        #synchronize_square_transaction(transaction)
+        synchronize_square_transaction(transaction)
       rescue => e
         Rails.logger.error(e)
         Rollbar.error(e)
@@ -19,6 +18,16 @@ class TransactionExport
 
     if results&.cursor&.present?
       export_to_salesforce(pagination_cursor: results.cursor)
+    end
+  end
+
+  def synchronize_square_transaction(transaction)
+    square_transaction = SquareTransaction.find_or_initialize_by(square_id: transaction.id)
+    if square_transaction.new_record?
+      salesforce_id = push_transaction_to_salesforce(transaction)
+
+      square_transaction.salesforce_id = salesforce_id
+      square_transaction.save!
     end
   end
 
