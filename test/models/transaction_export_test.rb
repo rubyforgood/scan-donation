@@ -17,7 +17,7 @@ class TransactionExportTest < ActiveSupport::TestCase
   end
 
   test 'requests transactions from square with no existing synced transactions' do
-    now = Time.now
+    now = Time.now.utc
     begin_time = 7.days.ago(now)
     stub_request(:get, "https://connect.squareup.com/v2/locations/FZS7GXYFJ6HRB/transactions?begin_time=#{URI.encode(begin_time.rfc3339)}&sort_order=ASC").
       with(headers: {'Accept'=>'application/json', 'Authorization'=>'Bearer api_key', 'Content-Type'=>'application/json', 'Expect'=>'', 'User-Agent'=>'Square-Connect-Ruby/2.0.2'}).
