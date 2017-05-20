@@ -37,11 +37,12 @@ module Salesforce
       )
     end
 
-    def find_contact(first_name: :ignore, last_name: :ignore, email: :ignore)
+    def find_contact(first_name: :ignore, last_name: :ignore, nickname: :ignore, email: :ignore)
       clauses = {}
       clauses[:FirstName] = first_name unless first_name == :ignore
       clauses[:LastName] = last_name unless last_name == :ignore
       clauses[:Email] = email unless email == :ignore
+      clauses[:Nickname__c] = nickname unless nickname == :ignore
 
       results = @client.query(
         "SELECT Id FROM #{CONTACT} " +

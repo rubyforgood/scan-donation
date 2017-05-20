@@ -20,6 +20,7 @@ class CustomerExportTest < ActiveSupport::TestCase
   test 'sends customer records to salesforce' do
     @salesforce_client_mock.expect(:create_contact, "abc123", [Salesforce::Contact])
     @salesforce_client_mock.expect(:find_contact, nil, [Hash])
+    @salesforce_client_mock.expect(:find_contact, nil, [Hash])
     ScanDonation.config.stub(:salesforce_client, @salesforce_client_mock) do
       CustomerExport.new(wet_run: true).export_to_salesforce
     end
