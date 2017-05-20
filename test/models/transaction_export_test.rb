@@ -3,7 +3,11 @@ require 'minitest/mock'
 
 class TransactionExportTest < ActiveSupport::TestCase
   setup do
-    @tenders = [{ customer_id: "321cba", created_at: 5.hours.ago, amount_money: 4200}]
+    @tenders = [
+      {
+        customer_id: "321cba", created_at: 5.hours.ago, amount_money: 4200, card_details: { status: 'CAPTURED' }
+      }
+    ]
     @response_body = { transactions: [{ id: "abc123", tenders: @tenders, updated_at: 1.day.ago }] }.to_json
 
     ENV["SALESFORCE_CLIENT_ID"] = 'client_id'

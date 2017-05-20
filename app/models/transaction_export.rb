@@ -1,6 +1,7 @@
 class TransactionExport
   ANONYMOUS_SALESFORCE_CUSTOMER_ID = '00331000031Tt8i'.freeze
   BEGIN_TIME_BUFFER_DAYS = 7.freeze
+  VALID_CARD_DETAILS_STATUS = 'CAPTURED'.freeze
 
   def initialize(now: Time.now)
     @now = now
@@ -40,6 +41,7 @@ class TransactionExport
       Rollbar.warning("Transaction(#{transaction.id}) has more then one tender.")
     end
     tender      = transaction.tenders.first
+    return unless tender&.card_details.status == VALID_CARD_DETAILS_STATUS
     customer_id =
       if tender.customer_id.present?
         #TODO: What if we don't find the customer?
