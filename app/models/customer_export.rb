@@ -17,6 +17,7 @@ class CustomerExport
         synchronize_square_customer(customer)
       rescue => e
         Rails.logger.error(e)
+        Rollbar.error(e)
       end
     end
 
