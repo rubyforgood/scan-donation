@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170520141937) do
+ActiveRecord::Schema.define(version: 20170520180311) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "square_customers", force: :cascade do |t|
     t.string "square_id", null: false
-    t.datetime "pushed_as_of", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "salesforce_id", null: false
     t.index ["square_id"], name: "index_square_customers_on_square_id", unique: true
   end
 
