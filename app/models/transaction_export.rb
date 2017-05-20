@@ -5,7 +5,7 @@ class TransactionExport
     square_client = ScanDonation.config.square_client
 
     Rails.logger.info "Starting: Exporting list of transactions from Square."
-    results = square_client.list_transactions(pagination_cursor: pagination_cursor)#, begin_time: begin_time)
+    results = square_client.list_transactions(pagination_cursor: pagination_cursor, begin_time: SquareTransaction.last_written_time)
 
     Array(results&.transactions).each do |transaction|
       begin
