@@ -32,19 +32,25 @@ module Salesforce
     RECORD_TYPE_ID = "012i0000000hSyeAAE".freeze
     PRIMARY_CAMPAIGN_SOURCE_ID = "70131000001mkhB".freeze
 
-    attr_reader :account_id, :contact_id, :close_date, :amount
+    attr_reader :account_id, :account_name, :contact_id, :close_date, :amount
 
-    def initialize(account_id:, contact_id:, close_date:, amount:)
+    def initialize(account_id:, account_name:, contact_id:, close_date:, amount:)
       @account_id = account_id
+      @account_name = account_name
       @contact_id = contact_id
       @close_date = close_date
       @amount = amount
+    end
+
+    def name
+      "#{account_name} $#{amount} Donation #{close_date.strftime("%m/%d/%Y")}"
     end
 
     def to_salesforce
       {
         RecordTypeId:             RECORD_TYPE_ID,
         CampaignId:               PRIMARY_CAMPAIGN_SOURCE_ID,
+        Name:                     name,
         AccountId:                account_id,
         npsp__Primary_Contact__c: contact_id,
         StageName:                "Posted",

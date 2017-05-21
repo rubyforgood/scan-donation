@@ -73,10 +73,11 @@ class TransactionExport
       if @wet_run
         square_transaction.salesforce_id = @salesforce_client.create_donation(
           Salesforce::Donation.new(
-            account_id: account.id,
-            contact_id: contact_id,
-            close_date: tender.created_at,
-            amount:     (BigDecimal(tender.amount_money.amount) / 100).to_s
+            account_id:   account.id,
+            account_name: account.name,
+            contact_id:   contact_id,
+            close_date:   tender.created_at,
+            amount:       (BigDecimal(tender.amount_money.amount) / 100).to_s
           )
         )
         square_transaction.save!
