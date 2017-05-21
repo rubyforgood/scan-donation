@@ -28,9 +28,38 @@ module Salesforce
     end
   end
 
+  class Donation
+    RECORD_TYPE_ID = "012i0000000hSyeAAE".freeze
+    PRIMARY_CAMPAIGN_SOURCE_ID = "70131000001mkhB".freeze
+
+    attr_reader :account_id, :contact_id, :close_date, :amount
+
+    def initialize(account_id:, contact_id:, close_date:, amount:)
+      @account_id = account_id
+      @contact_id = contact_id
+      @close_date = close_date
+      @amount = amount
+    end
+
+    def to_salesforce
+      {
+        RecordTypeId:             RECORD_TYPE_ID,
+        CampaignId:               PRIMARY_CAMPAIGN_SOURCE_ID,
+        AccountId:                account_id,
+        npsp__Primary_Contact__c: contact_id,
+        StageName:                "Posted",
+        CloseDate:                close_date,
+        Type:                     "Individual",
+        Amount:                   amount
+      }
+    end
+  end
+
   class Client
     API_VERSION = "39.0".freeze
+
     CONTACT = "Contact".freeze
+    OPPORTUNITY = "Opportunity".freeze
 
     def initialize(client_id:, client_secret:, username:, password:, security_token:, logger: Rails.logger)
       @logger = logger
@@ -77,6 +106,10 @@ module Salesforce
 
     def create_contact(contact)
       @client.create!(CONTACT, contact.to_salesforce)
+    end
+
+    def create_donation(donation)
+      @client.create!(OPPORTUNITY, donation.to_salesforce)
     end
   end
 end

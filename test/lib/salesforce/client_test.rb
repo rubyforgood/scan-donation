@@ -63,6 +63,33 @@ module Salesforce
       res.must_equal "abc123"
     end
 
+    it "creates a donation (as an opportunity)" do
+      stub_salesforce_login
+
+      donation = Salesforce::Donation.new(
+        account_id: "account123",
+        contact_id: "contact123",
+        close_date: Time.parse("2015-01-01T09:00:00Z"),
+        amount:     "10.00"
+      )
+
+      stub_request(:post, "#{INSTANCE_URL}/services/data/v#{API_VERSION}/sobjects/Opportunity")
+      .with(body: {
+        RecordTypeId:             "012i0000000hSyeAAE",
+        CampaignId:               "70131000001mkhB",
+        AccountId:                donation.account_id,
+        npsp__Primary_Contact__c: donation.contact_id,
+        StageName:                "Posted",
+        CloseDate:                donation.close_date,
+        Type:                     "Individual",
+        Amount:                   donation.amount
+      })
+      .to_return(status: 200, headers: { "content-type" => "application/json" }, body: JSON.dump({ "id" => "abc123"}))
+
+      res = client.create_donation(donation)
+      res.must_equal "abc123"
+    end
+
     it "fetches the account associated with a contact by id" do
       stub_salesforce_login
       stub_salesforce_search(/SELECT.+Account\.Id.+FROM.+Contact.+WHERE.+Id='abc123'/, [{ Account: { Id: "zzz999", Name: "account name" } }])
