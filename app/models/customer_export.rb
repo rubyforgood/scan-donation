@@ -45,6 +45,8 @@ class CustomerExport
         square_customer.salesforce_id = salesforce_id
         square_customer.save!
       end
+    else
+      Rails.logger.debug "Contact #{customer} already present in Salesforce. Skipping."
     end
   end
 
