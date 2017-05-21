@@ -54,7 +54,7 @@ module Salesforce
         AccountId:                account_id,
         npsp__Primary_Contact__c: contact_id,
         StageName:                "Posted",
-        CloseDate:                close_date,
+        CloseDate:                close_date.iso8601,
         Type:                     "Individual",
         Amount:                   amount
       }
