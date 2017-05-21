@@ -76,7 +76,7 @@ class TransactionExport
             account_id:   account.id,
             account_name: account.name,
             contact_id:   contact_id,
-            close_date:   tender.created_at,
+            close_date:   Time.parse(tender.created_at),
             amount:       (BigDecimal(tender.amount_money.amount) / 100).to_s
           )
         )
