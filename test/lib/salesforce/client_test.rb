@@ -67,16 +67,18 @@ module Salesforce
       stub_salesforce_login
 
       donation = Salesforce::Donation.new(
-        account_id: "account123",
-        contact_id: "contact123",
-        close_date: Time.parse("2015-01-01T09:00:00Z"),
-        amount:     "10.00"
+        account_id:   "account123",
+        account_name: "account name",
+        contact_id:   "contact123",
+        close_date:   Time.parse("2015-01-01T09:00:00Z"),
+        amount:       "10.00"
       )
 
       stub_request(:post, "#{INSTANCE_URL}/services/data/v#{API_VERSION}/sobjects/Opportunity")
       .with(body: {
         RecordTypeId:             "012i0000000hSyeAAE",
         CampaignId:               "70131000001mkhB",
+        Name:                     "account name $10.00 Donation 01/01/2015",
         AccountId:                donation.account_id,
         npsp__Primary_Contact__c: donation.contact_id,
         StageName:                "Posted",
