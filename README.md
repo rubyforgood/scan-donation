@@ -5,9 +5,9 @@ Donation app for Stop Child Abuse Now of Northern VA
 ## Setup
 This project uses
 
-ruby `2.4.1`
+Ruby `2.4.1`
 
-rails `5.1.1`
+Rails `5.1.1`
 
 Run the following commands to set up the project on your local machine:
 
@@ -24,12 +24,9 @@ bundle
 `
 
 `
-rake db:create
+rake db:create db:migrate
 `
 
-`
-rake db:migrate
-`
 
 `rails s` to start the server
 
